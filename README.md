@@ -1,4 +1,4 @@
-Voting System<br>
+Blockchained Voting System<br>
 Suitable for MCST AGM, Company AGM
 <br>
 <br>
