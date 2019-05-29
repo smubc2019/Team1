@@ -8,7 +8,7 @@ pragma solidity 0.5.1;
 
 
 
-    
+
 contract Voting {
 
 
@@ -18,8 +18,8 @@ contract Voting {
         WAIT,       // newProposal() called, Prepare for voting
         COMPLETED,  // Voting is completed
         EXPIRED     // pre-set voting period have reached
-    } 
-    
+    }
+
     enum Outcome {
         NONE,       // no outcome yet
         PASSED,     // we reached decision, proposal accepted and passed
@@ -37,7 +37,7 @@ contract Voting {
         string description;         // Brief description of this proposal
         uint8  registeredVoters;    // Total number of voters registered to vote
         address owner;
- 
+
     }
 
     struct Voter {
@@ -53,8 +53,8 @@ contract Voting {
     Voter[] votersRegister;
     uint8 totalVoters=0;
     uint8 index;
-    
-    function getShares(address voter) private returns(uint8) {
+
+    function getShares(address voter) private view returns(uint8) {
         uint8 k=0;
 
         while (k<proposalToVote.registeredVoters){
@@ -63,10 +63,10 @@ contract Voting {
             }
             k++;
         }
-        
+
         return 0;
-    } 
-    
+    }
+
     // Return true if voter voted before
     function acceptVote(address voter) private returns(bool) {
         uint8 k=0;
@@ -84,27 +84,27 @@ contract Voting {
                 else {
                     // voter found, but never voted, so record this vote
                     votersRegister[k].voted=true;
-                    voted=false; 
+                    voted=false;
                     allow=true;
                 }
                 break;
             }
             k++;
         }
-        
-        
+
+
         if (! voted ){
             if (k>=proposalToVote.registeredVoters){
                 // No vote record found, but voter not registered
                 allow=false;
             }
         }
-        
+
         return allow;
-    } 
-    
-    
-    
+    }
+
+
+
     ///values must be set when beginVoting() is called
     Proposal proposalToVote = Proposal (
         0,     // total available votes if all voter voted
@@ -119,7 +119,7 @@ contract Voting {
         msg.sender      // owner=msg.sender, should be administrator's address
 
     );
-    
+
  //   uint256 public numDices = 0;
   //  mapping(uint256 => dice) public dices;
 
@@ -130,16 +130,16 @@ contract Voting {
         // Its meaningless to vote if 1 voter have shares > quorum
         // quorum is in %
         require(shares>0 && shares*100 < proposalToVote.totalVotes*proposalToVote.quorum);
-        
+
         // voting must already been setup, waiting for registration
         require(proposalToVote.state == State.WAIT);
-        
+
         votersRegister[proposalToVote.registeredVoters].voter=msg.sender; // We store voter's address for matching later
         votersRegister[proposalToVote.registeredVoters].shares=shares;     // we store number of shares (votes) this voter has
-        votersRegister[proposalToVote.registeredVoters].voted=false;      // 
+        votersRegister[proposalToVote.registeredVoters].voted=false;      //
         proposalToVote.registeredVoters++;
-        
-    } 
+
+    }
 
 
     // setup new voting : Administrator create new voting call
@@ -151,7 +151,7 @@ contract Voting {
             uint8   quorum, // minimum supporting vote to pass resolution
             uint8   totalVotes // sum of legal votes of all voters, like 100 people total 160 votes as some voters has more votes
 	) public {
-	    
+
 	    ///values must be set when beginVoting() is called
 	    proposalToVote.totalVotes=totalVotes;
 	    proposalToVote.quorum=quorum;
@@ -165,7 +165,7 @@ contract Voting {
     function beginVoting() public {
         require(proposalToVote.state == State.WAIT); // must be in WAIT state first
         require(proposalToVote.registeredVoters>3 && proposalToVote.totalVotes==0);// cant vote if less than 3 voters
-        
+
         proposalToVote.state = State.READY;
     }
 
@@ -174,7 +174,7 @@ contract Voting {
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     function abort() public {
         require(proposalToVote.state != State.COMPLETED); // can't abort completed voting
-        
+
         proposalToVote.state=State.ABORTED;
         proposalToVote.outcome=Outcome.NONE;
     }
@@ -210,15 +210,15 @@ contract Voting {
 
         // voter must be valid and not voted before and have >0 shares
         require(getShares(msg.sender)>0);
-        
+
         // voter must have registered before, and have never voted before
         require(acceptVote(msg.sender));
-        
+
         // Must be in READY state to vote
         require(proposalToVote.state==State.READY);
-        
+
         bool result=false;
-        
+
         if (accept){// (this) voter voted YES, 1 share = 1 vote
               proposalToVote.yesVotes+=getShares(msg.sender);
               result=true;
@@ -231,15 +231,12 @@ contract Voting {
         if (100*(proposalToVote.yesVotes/proposalToVote.totalVotes)>=proposalToVote.quorum){
               // Minimum YES votes (qourum) achieved //
               proposalToVote.outcome = Outcome.PASSED;
-              
+
         }
         else {
              proposalToVote.outcome = Outcome.DEFEATED;
         }
       }
-        
- 
+
+
     }
-
-
-
