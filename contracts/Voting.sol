@@ -5,7 +5,7 @@ pragma solidity ^0.5.0;
 /// Smart contract project : Voting System
 /// By Team 1: Darryl, Po Jid, Yong Xian
 /// All Rights Reserved, 27 May 2019
-//Date are stored in the Unix epoch format (timestamp)
+//Date are stored in the Unix epoch format (timestamp) 
 //which consists in an integer of the number of seconds since 1970-01-01.
 /*
 1) Able to Register Voters (Those that are voting for the proposal)
@@ -14,7 +14,7 @@ pragma solidity ^0.5.0;
 4) Calculate Expiry data based on TTL NOTE: Maybe do not need usedByDate since proposal expired based on TTL
 1 hour = 36000 seconds
 */
-
+    
 contract Voting {
 
 
@@ -24,8 +24,8 @@ contract Voting {
         WAIT,       // newProposal() called, Prepare for voting
         COMPLETED,  // Voting is completed
         EXPIRED     // pre-set voting period have reached
-    }
-
+    } 
+    
     enum Outcome {
         PENDING,       // no outcome yet
         PASSED,     // we reached decision, proposal accepted and passed
@@ -40,9 +40,9 @@ contract Voting {
     }
     uint256 public numVoters = 0;
     mapping(uint256 => voter) public voters;
-
-
-
+   
+    
+    
     struct proposal {
         uint256 totalVotes;             // total available votes (shares) = sum(shares) of all voters
         uint256 quorum;                 // minimum quorum (in %) of YES votes needed to pass resolution
@@ -59,12 +59,12 @@ contract Voting {
      uint256 public proposalId = 0;
      mapping(uint256 => proposal) public proposals;
 
-
+    
     //register Voters. Must be done before creation of proposals
     function registerVoters(uint8 shares) public payable returns (address){
         require(shares >0);
         require(msg.value > 0.01 ether, "at least 0.01 ETH is needed to registered a voter");
-
+        
         // new voter object
         voter memory newVoter =voter (
             msg.sender,
@@ -75,7 +75,7 @@ contract Voting {
         voters[newVoterId] = newVoter;
         return msg.sender;
     }
-
+    
     // setup new voting : Administrator create new voting call
     // Setup proposal, ready for voting
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,57 +106,60 @@ contract Voting {
        );
         uint256 newProposalId = proposalId++;
         proposals[newProposalId] = newProposal;
-
+        
         return name;
     }
     //Calculate total votes holds by all the voters
     function calculateTotalVotes(uint256 pId) public  {
         uint totalvotes=0;
         for (uint8 i = 0 ; i< numVoters; i++){
-
+            
             totalvotes+=voters[i].shares;
         }
         proposals[pId].totalVotes= totalvotes;
     }
-
+    
     uint256 public uncastedVotes=0;
     //Cast vote based on id of user starting from 0. Each id tag to a voter address
     function castVoteForProposal(uint8 vote,uint256 userId ,uint256 pId)public{
         //require(vote > 0 ,"vote cannot be equal to 0 or less!");
       require(checkExpiry(pId)!= true,"Proposal Expired cannot vote!");
+      require(proposals[pId].state != State.ABORTED, "Proposal has been aborted cannot vote!");
       require(voters[userId].voted!=true, "user voted already!" );
       require(voters[userId].shares>= vote && vote<= voters[userId].shares,"user casted votes more than what he owns!");
-      if(!voters[userId].voted){
+      if(!voters[userId].voted){ 
         voters[userId].voted = true;
         if(vote > 0){
             proposals[pId].yesVotes+=vote;
         }
         }
     }
-
-
+    
+    //Edited here
     //CALCULATE THE OUTCOME OF THE VOTING
     function getOutcome(uint256 pId) public {
        // require(proposalToVote.state==State.COMPLETED, "Outcome meaningless");
-       //require(checkExpiry(pId)!=true,"Proposal Expired cannot get outcome!");
+        require(checkExpiry(pId)!=true,"Proposal Expired cannot get outcome!");
+        require(proposals[pId].state != State.ABORTED, "Proposal has been aborted cannot vote!");
         uint256 quorum = (100 / proposals[pId].quorum) *100;// if 80% = 125 (1.25)
         //qurom is in percentage
         uint256 totalVotes = proposals[pId].totalVotes;
         uint256 requiredVotes = (totalVotes / quorum)* 100; //if total votes is 16, 80% is 12.8
         uint castedVotes = proposals[pId].yesVotes * 100;
-
+        
         //calculate uncasted votes
         proposals[pId].noVotes = proposals[pId].totalVotes - proposals[pId].yesVotes;
-
+        
         if(castedVotes > requiredVotes){
             proposals[pId].outcome= Outcome.PASSED;
-
+          
         }else{
             proposals[pId].outcome = Outcome.DEFEATED;
         }
           proposals[pId].state= State.COMPLETED;
     }
-
+    
+    
     // Check used-by-date, set voting state accordingly
     function checkExpiry(uint256 pId) public returns (bool) {
         bool expired = false;
@@ -167,7 +170,7 @@ contract Voting {
         }
         return expired;
     }
-
+    
     // abort voting : Administrator call  abort, or perhaps we reached used-by-date and nobody ever voted
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     function abort(uint256 pId) public {
@@ -177,3 +180,6 @@ contract Voting {
     }
 
     }
+
+
+
