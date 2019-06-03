@@ -17,3 +17,5 @@ Show how React can talk with the Ethereum blockchain through Metamask.
 
 # Contract Deployment
 Solidity contract is deployed onto Ropsten Testnet at 0x8ca0abd508228fda92191ef8cb4462efb734f5c7
+
+Files that you are interested. Contracts/VotingApp.sol , src/App.js
