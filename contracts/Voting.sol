@@ -41,7 +41,26 @@ contract Voting {
     uint256 public numVoters = 0;
     mapping(uint256 => voter) public voters;
    
-    
+   //test methods
+   
+   uint256 public secret = 50;
+    function getSecret () public  returns (uint256) {
+    return secret;
+  }
+  
+   function setValue (uint256 newInt) public payable {
+    secret = newInt;
+  }
+  
+    string public secretMsg = "You fetch me!";
+    function getSecretMsg () public  returns (string memory) {
+    return secretMsg;
+  }
+  
+   function setMsg (string memory newMsg) public payable {
+    secretMsg = newMsg;
+  }
+  //end of test methods
     
     struct proposal {
         uint256 totalVotes;             // total available votes (shares) = sum(shares) of all voters
@@ -61,7 +80,7 @@ contract Voting {
 
     
     //register Voters. Must be done before creation of proposals
-    function registerVoters(uint8 shares) public payable returns (address){
+    function registerVoters(uint8 shares) public payable{
         require(shares >0);
         require(msg.value > 0.01 ether, "at least 0.01 ETH is needed to registered a voter");
         
@@ -73,7 +92,6 @@ contract Voting {
         );
         uint256 newVoterId = numVoters++;
         voters[newVoterId] = newVoter;
-        return msg.sender;
     }
     
     // setup new voting : Administrator create new voting call
@@ -137,7 +155,9 @@ contract Voting {
     
     //Edited here
     //CALCULATE THE OUTCOME OF THE VOTING
-    function getOutcome(uint256 pId) public {
+    function getOutcome(uint256 pId) public returns (string memory pOutcome, string memory pState, uint256 yesVotes, uint256 noVotes ){
+        string memory outcome;
+        string memory state;
        // require(proposalToVote.state==State.COMPLETED, "Outcome meaningless");
         require(checkExpiry(pId)!=true,"Proposal Expired cannot get outcome!");
         require(proposals[pId].state != State.ABORTED, "Proposal has been aborted cannot vote!");
@@ -152,13 +172,23 @@ contract Voting {
         
         if(castedVotes > requiredVotes){
             proposals[pId].outcome= Outcome.PASSED;
-          
+            outcome = "PASSED";
         }else{
             proposals[pId].outcome = Outcome.DEFEATED;
+            outcome = "DEFEATED";
         }
           proposals[pId].state= State.COMPLETED;
+          state = "COMPLETED";
+          
+          return (outcome,state,proposals[pId].yesVotes,proposals[pId].noVotes );
     }
     
+    function getProposalDetails(uint256 pId) public returns (string memory pName, string memory pDes) {
+        string memory name = proposals[pId].name;
+        string memory des = proposals[pId].description;
+        return (name, des);
+        
+    }
     
     // Check used-by-date, set voting state accordingly
     function checkExpiry(uint256 pId) public returns (bool) {
@@ -178,7 +208,9 @@ contract Voting {
         proposals[pId].state=State.ABORTED;
         proposals[pId].outcome=Outcome.PENDING;
     }
-
+    
+    //method to get variables from   proposal 
+    
     }
 
 
