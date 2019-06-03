@@ -121,7 +121,47 @@ class App extends Component {
 			}
 		],
 		"name": "getOutcome",
-		"outputs": [],
+		"outputs": [
+			{
+				"name": "pOutcome",
+				"type": "string"
+			},
+			{
+				"name": "pState",
+				"type": "string"
+			},
+			{
+				"name": "yesVotes",
+				"type": "uint256"
+			},
+			{
+				"name": "noVotes",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "getProposalDetails",
+		"outputs": [
+			{
+				"name": "pName",
+				"type": "string"
+			},
+			{
+				"name": "pDes",
+				"type": "string"
+			}
+		],
 		"payable": false,
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -142,6 +182,20 @@ class App extends Component {
 	},
 	{
 		"constant": false,
+		"inputs": [],
+		"name": "getSecretMsg",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
 		"inputs": [
 			{
 				"name": "shares",
@@ -149,6 +203,20 @@ class App extends Component {
 			}
 		],
 		"name": "registerVoters",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newMsg",
+				"type": "string"
+			}
+		],
+		"name": "setMsg",
 		"outputs": [],
 		"payable": true,
 		"stateMutability": "payable",
@@ -272,6 +340,20 @@ class App extends Component {
 	{
 		"constant": true,
 		"inputs": [],
+		"name": "secretMsg",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
 		"name": "uncastedVotes",
 		"outputs": [
 			{
@@ -315,14 +397,23 @@ class App extends Component {
       /* Phase 2 */
       /* Edit this with each iteration of Smart Contract */
       /* Note: this adress is a placeholder and will not work */
-      ContractInstance: MyContract.at ('0xcfd171907b4199528a7bac34a7d66970786e87f9'),
+      ContractInstance: MyContract.at ('0x8ca0abd508228fda92191ef8cb4462efb734f5c7'),
       /* Phase 3 -- Smart Contract Manipulation */
       contractState: '',
+      numVotes: '',
+      userId:'',
+      proposalId:'',
       shares: '',
-      propsalName: '',
-      propsalDescription:'',
-      propsalQuorum:'',
-      propsalTTL:''
+      proposalName: '',
+      proposalDescription:'',
+      proposalQuorum:'',
+      proposalTTL:'',
+      outcome:'',
+      state:'',
+      yesVote:'',
+      noVote:'',
+      currentPname:'',
+      currentPdes:''
     }
 
     /* Phase 2 */
@@ -331,9 +422,14 @@ class App extends Component {
     /* Phase 3 */
     this.handleContractStringSubmit = this.handleContractStringSubmit.bind (this);
     this.handleRegisterVoter = this.handleRegisterVoter.bind(this);
-    this.getProposal = this.getProposal.bind(this);
-
     this.handleCreateProposal = this.handleCreateProposal.bind(this);
+    this.handleCalculateTotalVote = this.handleCalculateTotalVote.bind(this);
+    this.handleCheckExpiry = this.handleCheckExpiry.bind(this);
+    this.handleCastVote = this.handleCastVote.bind(this);
+    this.handleGetOutCome = this.handleGetOutCome.bind(this);
+    //not working
+    this.getProposalDetails = this.getProposalDetails.bind(this);
+
   }
 
   /* Phase 2 */
@@ -389,10 +485,10 @@ handleRegisterVoter (event) {
 handleCreateProposal (event) {
   event.preventDefault();
 const { createNewProposal } = this.state.ContractInstance;
-  const { propsalName: pName, propsalDescription: pdes, propsalQuorum: pQuorum, propsalTTL:pTTL} = this.state;
+const { proposalName: pName, proposalDescription: pDes, proposalQuorum: pQuorum, proposalTTL: pTTL} = this.state;
 
   createNewProposal (
-    (pName, pdes, pQuorum, pTTL), {
+      pName,pDes,pQuorum,pTTL, {
       gas: 300000,
       from: window.web3.eth.accounts[0],
       value: window.web3.toWei(0.02,'ether')
@@ -400,26 +496,75 @@ const { createNewProposal } = this.state.ContractInstance;
       console.log('Creating new proposal!');
       //console.log(result);
     }
-
   )
-
 }
 
+handleCalculateTotalVote (event) {
+  event.preventDefault();
+  const { calculateTotalVotes } = this.state.ContractInstance;
+  const { proposalId: pId } = this.state;
 
-async getProposal(){
-  const { proposals } = this.state.ContractInstance;
-  proposals (
-    0, {
-      gas: 300000,
-      from: window.web3.eth.accounts[0],
-      value: window.web3.toWei(0.01,'ether')
-    }, (err,result) => {
+    calculateTotalVotes (
+      pId, (err,result) => {
+        console.log('Calculating total votes that registered to proposal!');
+        //console.log(result);
+      }
+    )
+}
+
+handleCastVote (event) {
+  event.preventDefault();
+  const { castVoteForProposal } = this.state.ContractInstance;
+  const { numVotes: numVotes, userId: uId, proposalId: pid } = this.state;
+    castVoteForProposal(
+      numVotes,uId,pid,
+        (err,result) => {
+      console.log('Casting votes for proposal!');
+      //console.log(result);
+    }
+    )
+}
+
+handleCheckExpiry (event) {
+  event.preventDefault();
+  const { checkExpiry } = this.state.ContractInstance;
+  const { proposalId: pId } = this.state;
+
+    checkExpiry (
+      pId, (err,result) => {
+        console.log('Checking expiry for proposal!');
+        //console.log(result);
+      }
+    )
+}
+
+handleGetOutCome (event) {
+  event.preventDefault();
+  const { getOutcome } = this.state.ContractInstance;
+  const { proposalId:pId } = this.state;
+  getOutcome.call(
+    pId, (err,result) => {
+      console.log('Checking expiry for proposal!');
+      console.log(result);
+      this.setState({outcome:result[0], state:result[1],yesVote:result[2][0],noVote:result[3][0]})
+    }
+  )
+}
+
+// not working
+ getProposalDetails(event){
+  event.preventDefault();
+  const { getProposalDetails } = this.state.ContractInstance;
+  const { proposalId:pId } = this.state;
+  getProposalDetails.call (
+    pId,
+     (err,result) => {
       console.log('Getting Proposals');
+      console.log(result);
+      this.setState({currentPname:result[0], currentPdes:result[1]})
     }
   )
 
-  const pro = await proposals;
-  console.log(pro);
 }
 
 
@@ -439,24 +584,17 @@ async getProposal(){
 
         {/* Phase 2 */}
         <br />
-        <br />
-        <button onClick={ this.querySecret }> Query Smart Contract's Secret </button>
-        <p>Secret: { this.state.contractState } </p>
-        <br />
-        <br />
-        {/*phase 3*/}
-        <br />
-        <form onSubmit={ this.handleContractStringSubmit }>
+        <form onSubmit={ this.getProposalDetails }>
           <input
-            type="text"
+            type="number"
             name="string-change"
-            placeholder="Enter new string..."
-            value ={ this.state.contractState }
-            onChange={ event => this.setState ({ contractState: event.target.value }) } />
-          <button type="submit"> Submit </button>
+            placeholder="Enter proposal id..."
+            value ={ this.state.proposalId }
+            onChange={ event => this.setState ({ proposalId: event.target.value }) } />
+          <button type="submit"> Query Proposal </button>
           <br/>
-
-        <button onClick=  { this.getProposal }> Query Contract's Proposal</button>
+          <p>Proposal Name: {this.state.currentPname} </p>
+          <p>Proposal Description: {this.state.currentPdes} </p>
         </form>
 
         {/* register voter */}
@@ -480,7 +618,8 @@ async getProposal(){
               name="proposal-name"
               placeholder="Enter proposal name..."
               value ={ this.state.proposalName }
-              onChange={ event => this.setState ({ proposalName: event.target.value }) } />
+              onChange = { event => this.setState ({proposalName: event.target.value})}
+               />
               <br/>
               <input
               type="text"
@@ -504,9 +643,75 @@ async getProposal(){
               onChange={ event => this.setState ({ proposalTTL: event.target.value }) } />
               <br/>
             <button type="submit"> Create new Proposal </button>
-
             </form>
 
+            <br/>
+            <form onSubmit={ this.handleCalculateTotalVote }>
+            <input
+            type="number"
+            name="calculate votes registered to proposal"
+            placeholder="Enter proposal id..."
+            value ={ this.state.proposalId }
+            onChange={ event => this.setState ({ proposalId: event.target.value }) } />
+            <br/>
+          <button type="submit"> Calculate votes registered to propose </button>
+          </form>
+
+          <br/>
+          <form onSubmit={ this.handleCastVote }>
+          <input
+          type="number"
+          name="Cast-votes"
+          placeholder="Enter votes to cast..."
+          value ={ this.state.numVotes }
+          onChange={ event => this.setState ({ numVotes: event.target.value }) } />
+          <br/>
+          <input
+          type="number"
+          name="Cast-votes-pId"
+          placeholder="Enter proposal id to cast votes..."
+          value ={ this.state.proposalId }
+          onChange={ event => this.setState ({ proposalId: event.target.value }) } />
+          <br/>
+          <input
+          type="number"
+          name="Cast-votes-uId"
+          placeholder="Enter user id to cast..."
+          value ={ this.state.userId }
+          onChange={ event => this.setState ({ userId: event.target.value }) } />
+          <br/>
+          <button type="submit"> Cast Vote for proposal </button>
+          </form>
+
+          <br/>
+          <p>Please check expiry for proposal before getting outcome!! </p>
+          <form onSubmit={ this.handleCheckExpiry }>
+          <input
+          type="number"
+          name="Checking expiry date"
+          placeholder="Enter proposal id..."
+          value ={ this.state.proposalId }
+          onChange={ event => this.setState ({ proposalId: event.target.value }) } />
+          <br/>
+          <button id='expiry' type="submit"> Check Expiry </button>
+          </form>
+          <br/>
+
+          <form onSubmit={ this.handleGetOutCome }>
+          <input
+          type="number"
+          name="Get Outcome for proposal"
+          placeholder="Enter proposal id..."
+          value ={ this.state.proposalId }
+          onChange={ event => this.setState ({ proposalId: event.target.value }) } />
+          <br/>
+          <button type="submit">Get Outcome for proposal </button>
+          </form>
+          <br/>
+          <p>Outcome is: {this.state.outcome} </p>
+          <p>State is: {this.state.state} </p>
+      {/*    <p>Yes Votes is: {this.state.yesVote} </p>
+          <p>No Votes: {this.state.noVote} </p> */}
       </div>
     );
   }
