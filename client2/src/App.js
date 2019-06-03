@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {BigNumber} from 'bignumber.js';
 
 
 /* Phase 2 -- Setting Up and Interacting with React */
@@ -530,10 +531,15 @@ handleCheckExpiry (event) {
   const { checkExpiry } = this.state.ContractInstance;
   const { proposalId: pId } = this.state;
 
-    checkExpiry (
+    checkExpiry.call(
       pId, (err,result) => {
         console.log('Checking expiry for proposal!');
         //console.log(result);
+        if(result) {
+            alert("Expired Proposal!");
+        } else {
+            alert("Not expired yet.");
+        }
       }
     )
 }
@@ -546,7 +552,20 @@ handleGetOutCome (event) {
     pId, (err,result) => {
       console.log('Checking expiry for proposal!');
       console.log(result);
-      this.setState({outcome:result[0], state:result[1],yesVote:result[2][0],noVote:result[3][0]})
+      
+      if(result) {
+          
+          var yes = new BigNumber(result[2]).toNumber();
+          var no = new BigNumber(result[3]).toNumber();
+          //alert(yes);
+          
+          this.setState({outcome:result[0], state:result[1],yesVote:yes,noVote:no})
+      
+      } else 
+      {
+          alert("Proposal may have expired. Check expiry first.");
+      }
+      
     }
   )
 }
