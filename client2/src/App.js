@@ -729,8 +729,8 @@ handleGetOutCome (event) {
           <br/>
           <p>Outcome is: {this.state.outcome} </p>
           <p>State is: {this.state.state} </p>
-      {/*    <p>Yes Votes is: {this.state.yesVote} </p>
-          <p>No Votes: {this.state.noVote} </p> */}
+          <p>Yes Votes is: {this.state.yesVote}</p>
+          <p>No Votes: {this.state.noVote} </p>
       </div>
     );
   }
