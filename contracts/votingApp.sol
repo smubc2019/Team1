@@ -129,6 +129,7 @@ contract Voting {
     //Calculate total votes holds by all the voters
     function calculateTotalVotes(uint256 pId) public  {
         uint totalvotes=0;
+        proposals[pId].state = State.READY;
         for (uint8 i = 0 ; i< numVoters; i++){
             
             totalvotes+=voters[i].shares;
@@ -157,7 +158,6 @@ contract Voting {
     function getOutcome(uint256 pId) public returns (string memory pOutcome, string memory pState, uint256 yesVotes, uint256 noVotes ){
         string memory outcome;
         string memory state;
-       // require(proposalToVote.state==State.COMPLETED, "Outcome meaningless");
         require(checkExpiry(pId)!=true,"Proposal Expired cannot get outcome!");
         require(proposals[pId].state != State.ABORTED, "Proposal has been aborted cannot vote!");
         uint256 quorum = (100 / proposals[pId].quorum) *100;// if 80% = 125 (1.25)
@@ -178,14 +178,26 @@ contract Voting {
         }
           proposals[pId].state= State.COMPLETED;
           state = "COMPLETED";
-          
           return (outcome,state,proposals[pId].yesVotes,proposals[pId].noVotes );
     }
     
-    function getProposalDetails(uint256 pId) public returns (string memory pName, string memory pDes) {
+    function getProposalDetails(uint256 pId) public returns (string memory pName, string memory pDes, uint256 pTotlalVotes, string memory pState) {
         string memory name = proposals[pId].name;
         string memory des = proposals[pId].description;
-        return (name, des);
+        string memory state;
+        uint256 totalVotes = proposals[pId].totalVotes;
+        if(proposals[pId].state == State.WAIT){
+            state = "WAIT";
+        }else  if(proposals[pId].state == State.COMPLETED){
+            state = "COMPLETED";
+        }else  if(proposals[pId].state == State.ABORTED){
+            state = "ABORTED";
+        }else  if(proposals[pId].state == State.READY){
+            state = "READY";
+        }else  if(proposals[pId].state == State.EXPIRED){
+            state = "EXPIRED";
+        }
+        return (name, des, totalVotes,state);
         
     }
     
@@ -199,6 +211,7 @@ contract Voting {
         }
         return expired;
     }
+    
     
     // abort voting : Administrator call  abort, or perhaps we reached used-by-date and nobody ever voted
     // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
