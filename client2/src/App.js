@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {BigNumber} from 'bignumber.js';
-
+import BigNumber from 'bignumber.js';
 
 /* Phase 2 -- Setting Up and Interacting with React */
 class App extends Component {
@@ -160,6 +159,14 @@ class App extends Component {
 			},
 			{
 				"name": "pDes",
+				"type": "string"
+			},
+			{
+				"name": "pTotlalVotes",
+				"type": "uint256"
+			},
+			{
+				"name": "pState",
 				"type": "string"
 			}
 		],
@@ -398,7 +405,7 @@ class App extends Component {
       /* Phase 2 */
       /* Edit this with each iteration of Smart Contract */
       /* Note: this adress is a placeholder and will not work */
-      ContractInstance: MyContract.at ('0x8ca0abd508228fda92191ef8cb4462efb734f5c7'),
+      ContractInstance: MyContract.at ('0xd538f22dbe6893821e0e568e0ab1ad902fcfe2a2'),
       /* Phase 3 -- Smart Contract Manipulation */
       contractState: '',
       numVotes: '',
@@ -414,7 +421,9 @@ class App extends Component {
       yesVote:'',
       noVote:'',
       currentPname:'',
-      currentPdes:''
+      currentPdes:'',
+      pTotalVotes:'',
+      pState:''
     }
 
     /* Phase 2 */
@@ -428,7 +437,6 @@ class App extends Component {
     this.handleCheckExpiry = this.handleCheckExpiry.bind(this);
     this.handleCastVote = this.handleCastVote.bind(this);
     this.handleGetOutCome = this.handleGetOutCome.bind(this);
-    //not working
     this.getProposalDetails = this.getProposalDetails.bind(this);
 
   }
@@ -531,15 +539,10 @@ handleCheckExpiry (event) {
   const { checkExpiry } = this.state.ContractInstance;
   const { proposalId: pId } = this.state;
 
-    checkExpiry.call(
+    checkExpiry (
       pId, (err,result) => {
         console.log('Checking expiry for proposal!');
         //console.log(result);
-        if(result) {
-            alert("Expired Proposal!");
-        } else {
-            alert("Not expired yet.");
-        }
       }
     )
 }
@@ -552,25 +555,14 @@ handleGetOutCome (event) {
     pId, (err,result) => {
       console.log('Checking expiry for proposal!');
       console.log(result);
-      
-      if(result) {
-          
-          var yes = new BigNumber(result[2]).toNumber();
-          var no = new BigNumber(result[3]).toNumber();
-          //alert(yes);
-          
-          this.setState({outcome:result[0], state:result[1],yesVote:yes,noVote:no})
-      
-      } else 
-      {
-          alert("Proposal may have expired. Check expiry first.");
-      }
-      
+      let bignum1 = BigNumber(result[2]).toNumber();
+      let bignum2 = BigNumber(result[3]).toNumber();
+      this.setState({outcome:result[0], state:result[1], yesVote:bignum1, noVote:bignum2})
     }
   )
 }
 
-// not working
+
  getProposalDetails(event){
   event.preventDefault();
   const { getProposalDetails } = this.state.ContractInstance;
@@ -580,7 +572,8 @@ handleGetOutCome (event) {
      (err,result) => {
       console.log('Getting Proposals');
       console.log(result);
-      this.setState({currentPname:result[0], currentPdes:result[1]})
+      let pTV = BigNumber(result[2]).toNumber();
+      this.setState({currentPname:result[0], currentPdes:result[1], pTotalVotes:pTV,pState:result[3]})
     }
   )
 
@@ -614,6 +607,8 @@ handleGetOutCome (event) {
           <br/>
           <p>Proposal Name: {this.state.currentPname} </p>
           <p>Proposal Description: {this.state.currentPdes} </p>
+          <p>Proposal Total Votes Registered: {this.state.pTotalVotes} </p>
+          <p>Proposal Current State: {this.state.pState} </p>
         </form>
 
         {/* register voter */}
@@ -726,11 +721,12 @@ handleGetOutCome (event) {
           <br/>
           <button type="submit">Get Outcome for proposal </button>
           </form>
-          <br/>
+          <br/>p
           <p>Outcome is: {this.state.outcome} </p>
           <p>State is: {this.state.state} </p>
-          <p>Yes Votes is: {this.state.yesVote}</p>
-          <p>No Votes: {this.state.noVote} </p>
+
+        <p>Yes Votes is: {this.state.yesVote} </p>
+         <p>No Votes: {this.state.noVote} </p>
       </div>
     );
   }
