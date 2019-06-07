@@ -1,0 +1,28 @@
+Voter Registry : all voters must register before voting
+				 registerVoters() to register with number of shares
+				 payable
+				
+Proposals Registry :  createNewProposal() to add new proposal
+					  TTL (expiry)
+					  quorum (min %votes to pass proposal
+					  payable
+					  
+Voting : Voter may cast votes (<= alloted shares)
+		castVoteForProposal()
+		A vote is a YES (support) vote
+        No vote means voting against (NO vote)
+		free to vote
+		
+
+calculateTotalVotes()
+		Count all YES votes
+		
+getOutcome()
+		Get outcme of voting, PASSED or DEFEATED
+
+checkExpiry()
+		Check TTL and update state accordingly
+		
+abort()
+		Administrator/owner may abort the voting
+		
