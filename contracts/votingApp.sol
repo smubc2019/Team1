@@ -142,11 +142,11 @@ contract Voting {
     function castVoteForProposal(uint8 vote,uint256 userId ,uint256 pId)public{
         //require(vote > 0 ,"vote cannot be equal to 0 or less!");
       require(checkExpiry(pId)!= true,"Proposal Expired cannot vote!");
-      require(proposals[pId].state != State.ABORTED, "Proposal has been aborted cannot vote!");
+      require(proposals[pId].state != State.ABORTED && proposals[pId].state != State.COMPLETED, "Proposal has been aborted or has completed cannot vote!");
       require(voters[userId].voted!=true, "user voted already!" );
       require(voters[userId].shares>= vote && vote<= voters[userId].shares,"user casted votes more than what he owns!");
       if(!voters[userId].voted){ 
-        voters[userId].voted = true;
+        //voters[userId].voted = true;
         if(vote > 0){
             proposals[pId].yesVotes+=vote;
         }
@@ -165,6 +165,9 @@ contract Voting {
         uint256 totalVotes = proposals[pId].totalVotes;
         uint256 requiredVotes = (totalVotes / quorum)* 100; //if total votes is 16, 80% is 12.8
         uint castedVotes = proposals[pId].yesVotes * 100;
+        for (uint256 i = 0 ; i<numVoters ;i++){
+            voters[i].voted = false;
+        }
         
         //calculate uncasted votes
         proposals[pId].noVotes = proposals[pId].totalVotes - proposals[pId].yesVotes;
