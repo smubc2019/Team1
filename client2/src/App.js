@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
+import { Grid, Paper, Button } from '@material-ui/core';
 import './App.css';
 import BigNumber from 'bignumber.js';
 
@@ -12,266 +13,6 @@ class App extends Component {
     /* Edit this with each iteration of Smart Contract */
     /* Note: this ABI is a placeholder and will not work */
     const MyContract = window.web3.eth.contract([
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "abort",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "calculateTotalVotes",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "vote",
-				"type": "uint8"
-			},
-			{
-				"name": "userId",
-				"type": "uint256"
-			},
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "castVoteForProposal",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "checkExpiry",
-		"outputs": [
-			{
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "name",
-				"type": "string"
-			},
-			{
-				"name": "description",
-				"type": "string"
-			},
-			{
-				"name": "quorum",
-				"type": "uint8"
-			},
-			{
-				"name": "TTL",
-				"type": "uint256"
-			}
-		],
-		"name": "createNewProposal",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "getOutcome",
-		"outputs": [
-			{
-				"name": "pOutcome",
-				"type": "string"
-			},
-			{
-				"name": "pState",
-				"type": "string"
-			},
-			{
-				"name": "yesVotes",
-				"type": "uint256"
-			},
-			{
-				"name": "noVotes",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "pId",
-				"type": "uint256"
-			}
-		],
-		"name": "getProposalDetails",
-		"outputs": [
-			{
-				"name": "pName",
-				"type": "string"
-			},
-			{
-				"name": "pDes",
-				"type": "string"
-			},
-			{
-				"name": "pTotlalVotes",
-				"type": "uint256"
-			},
-			{
-				"name": "pState",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "getSecret",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [],
-		"name": "getSecretMsg",
-		"outputs": [
-			{
-				"name": "",
-				"type": "string"
-			}
-		],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "shares",
-				"type": "uint8"
-			}
-		],
-		"name": "registerVoters",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newMsg",
-				"type": "string"
-			}
-		],
-		"name": "setMsg",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newInt",
-				"type": "uint256"
-			}
-		],
-		"name": "setValue",
-		"outputs": [],
-		"payable": true,
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "numVoters",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "proposalId",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
 	{
 		"constant": true,
 		"inputs": [
@@ -332,9 +73,54 @@ class App extends Component {
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "name",
+				"type": "string"
+			},
+			{
+				"name": "description",
+				"type": "string"
+			},
+			{
+				"name": "quorum",
+				"type": "uint8"
+			},
+			{
+				"name": "TTL",
+				"type": "uint256"
+			}
+		],
+		"name": "createNewProposal",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "getSecretMsg",
+		"outputs": [
+			{
+				"name": "",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [],
-		"name": "secret",
+		"name": "proposalId",
 		"outputs": [
 			{
 				"name": "",
@@ -343,6 +129,65 @@ class App extends Component {
 		],
 		"payable": false,
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "getProposalDetails",
+		"outputs": [
+			{
+				"name": "pName",
+				"type": "string"
+			},
+			{
+				"name": "pDes",
+				"type": "string"
+			},
+			{
+				"name": "pTotlalVotes",
+				"type": "uint256"
+			},
+			{
+				"name": "pState",
+				"type": "string"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "numVoters",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newInt",
+				"type": "uint256"
+			}
+		],
+		"name": "setValue",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -360,9 +205,132 @@ class App extends Component {
 		"type": "function"
 	},
 	{
+		"constant": false,
+		"inputs": [],
+		"name": "getSecret",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "calculateTotalVotes",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "shares",
+				"type": "uint8"
+			}
+		],
+		"name": "registerVoters",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"constant": true,
 		"inputs": [],
 		"name": "uncastedVotes",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "vote",
+				"type": "uint8"
+			},
+			{
+				"name": "userId",
+				"type": "uint256"
+			},
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "castVoteForProposal",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "newMsg",
+				"type": "string"
+			}
+		],
+		"name": "setMsg",
+		"outputs": [],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "getOutcome",
+		"outputs": [
+			{
+				"name": "pOutcome",
+				"type": "string"
+			},
+			{
+				"name": "pState",
+				"type": "string"
+			},
+			{
+				"name": "yesVotes",
+				"type": "uint256"
+			},
+			{
+				"name": "noVotes",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "secret",
 		"outputs": [
 			{
 				"name": "",
@@ -399,13 +367,46 @@ class App extends Component {
 		"payable": false,
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "checkExpiry",
+		"outputs": [
+			{
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "pId",
+				"type": "uint256"
+			}
+		],
+		"name": "abort",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ])
     this.state = {
       /* Phase 2 */
       /* Edit this with each iteration of Smart Contract */
       /* Note: this adress is a placeholder and will not work */
-      ContractInstance: MyContract.at ('0xd538f22dbe6893821e0e568e0ab1ad902fcfe2a2'),
+      ContractInstance: MyContract.at ('0x36edc2dfca0c4633016e2ebb6dcd85c1ba42d728'),
       /* Phase 3 -- Smart Contract Manipulation */
       contractState: '',
       numVotes: '',
@@ -528,6 +529,9 @@ handleCastVote (event) {
     castVoteForProposal(
       numVotes,uId,pid,
         (err,result) => {
+      if(err){
+        alert("Something went wrong! Perhaps voter casted votes already! Or Proposal is completed!")
+      }
       console.log('Casting votes for proposal!');
       //console.log(result);
     }
@@ -555,9 +559,13 @@ handleGetOutCome (event) {
     pId, (err,result) => {
       console.log('Checking expiry for proposal!');
       console.log(result);
+      if(err){
+        alert("Something went wrong! Probably proposal expired!")
+      }else{
       let bignum1 = BigNumber(result[2]).toNumber();
       let bignum2 = BigNumber(result[3]).toNumber();
       this.setState({outcome:result[0], state:result[1], yesVote:bignum1, noVote:bignum2})
+    }
     }
   )
 }
@@ -596,6 +604,12 @@ handleGetOutCome (event) {
 
         {/* Phase 2 */}
         <br />
+
+        <Grid container spacing = {3} >
+        <Grid item xs ={4}/>
+        <Grid item xs ={4}>
+        <Paper style={{border:"1px solid black"}}>
+        <h3>Get Proposal Details </h3>
         <form onSubmit={ this.getProposalDetails }>
           <input
             type="number"
@@ -603,17 +617,25 @@ handleGetOutCome (event) {
             placeholder="Enter proposal id..."
             value ={ this.state.proposalId }
             onChange={ event => this.setState ({ proposalId: event.target.value }) } />
-          <button type="submit"> Query Proposal </button>
+          <br/>
+          <button style= {{borderRadius:"12px", backgroundColor:"black", color:"white" }} type="submit"> Query Proposal </button>
           <br/>
           <p>Proposal Name: {this.state.currentPname} </p>
           <p>Proposal Description: {this.state.currentPdes} </p>
           <p>Proposal Total Votes Registered: {this.state.pTotalVotes} </p>
           <p>Proposal Current State: {this.state.pState} </p>
         </form>
-
+        </Paper>
+        </Grid>
+        </Grid>
         {/* register voter */}
-
         <br />
+
+        <Grid container spacing = {3} >
+        <Grid item xs ={4}/>
+        <Grid item xs ={4}>
+        <Paper style={{border:"1px solid blue"}}>
+          <h2>Register Voter </h2>
         <form onSubmit={ this.handleRegisterVoter }>
           <input
             type="number"
@@ -622,10 +644,20 @@ handleGetOutCome (event) {
             value ={ this.state.shares }
             onChange={ event => this.setState ({ shares: event.target.value }) } />
 
-          <button type="submit"> Register Voter </button>
+          <br/>  
+          <button style= {{borderRadius:"12px", backgroundColor:"blue", color:"white" }} type="submit"> Register Voter </button>
 
           </form>
+          </Paper>
+          </Grid>
+          </Grid>
+
+          <Grid container spacing = {3} >
+          <Grid item xs ={4}/>
+          <Grid item xs ={4}>
+          <Paper style ={{ border:"1px solid black" }}>
           <br/>
+            <h2>Create Proposal </h2>
           <form onSubmit={ this.handleCreateProposal }>
             <input
               type="text"
@@ -656,10 +688,19 @@ handleGetOutCome (event) {
               value ={ this.state.proposalTTL }
               onChange={ event => this.setState ({ proposalTTL: event.target.value }) } />
               <br/>
-            <button type="submit"> Create new Proposal </button>
+            <button style= {{borderRadius:"12px", backgroundColor:"black", color:"white" }} type="submit"> Create new Proposal </button>
             </form>
+            <p> <br/> </p>
+            </Paper>
+            </Grid>
+            </Grid>
 
+            <Grid container spacing = {3} >
+            <Grid item xs ={4}/>
+            <Grid item xs ={4}>
+            <Paper style = {{border:"1px solid blue"}}>
             <br/>
+            <h2>Calculate total vote </h2>
             <form onSubmit={ this.handleCalculateTotalVote }>
             <input
             type="number"
@@ -668,10 +709,18 @@ handleGetOutCome (event) {
             value ={ this.state.proposalId }
             onChange={ event => this.setState ({ proposalId: event.target.value }) } />
             <br/>
-          <button type="submit"> Calculate votes registered to propose </button>
+          <button style= {{borderRadius:"12px", backgroundColor:"blue", color:"white" }} type="submit"> Calculate votes registered to propose </button>
           </form>
+          </Paper>
+          </Grid>
+          </Grid>
 
+          <Grid container spacing = {3} >
+          <Grid item xs ={4}/>
+          <Grid item xs ={4}>
+          <Paper style ={{border:"1px solid black"}}>
           <br/>
+            <h2>Cast vote </h2>
           <form onSubmit={ this.handleCastVote }>
           <input
           type="number"
@@ -694,10 +743,19 @@ handleGetOutCome (event) {
           value ={ this.state.userId }
           onChange={ event => this.setState ({ userId: event.target.value }) } />
           <br/>
-          <button type="submit"> Cast Vote for proposal </button>
+          <button style= {{borderRadius:"12px", backgroundColor:"black", color:"white" }} type="submit"> Cast Vote for proposal </button>
           </form>
+          <p> <br/> </p>
+          </Paper>
+          </Grid>
+          </Grid>
 
           <br/>
+          <Grid container spacing = {3} >
+          <Grid item xs ={4}/>
+          <Grid item xs ={4}>
+          <Paper style = {{border:"1px solid blue"}}>
+            <h2>Check proposal expiry </h2>
           <p>Please check expiry for proposal before getting outcome!! </p>
           <form onSubmit={ this.handleCheckExpiry }>
           <input
@@ -707,10 +765,17 @@ handleGetOutCome (event) {
           value ={ this.state.proposalId }
           onChange={ event => this.setState ({ proposalId: event.target.value }) } />
           <br/>
-          <button id='expiry' type="submit"> Check Expiry </button>
+          <button style= {{borderRadius:"12px", backgroundColor:"black", color:"white" }} id='expiry' type="submit"> Check Expiry </button>
           </form>
           <br/>
+          </Paper>
+          </Grid>
 
+          <Grid container spacing = {3} >
+          <Grid item xs ={4}/>
+          <Grid item xs = {4}>
+          <Paper style = {{border: "1px solid black"}}>
+            <h2>Get Proposal Outcome </h2>
           <form onSubmit={ this.handleGetOutCome }>
           <input
           type="number"
@@ -719,14 +784,19 @@ handleGetOutCome (event) {
           value ={ this.state.proposalId }
           onChange={ event => this.setState ({ proposalId: event.target.value }) } />
           <br/>
-          <button type="submit">Get Outcome for proposal </button>
+          <button style= {{borderRadius:"12px", backgroundColor:"blue", color:"white" }} type="submit">Get Outcome for proposal </button>
           </form>
-          <br/>p
+          <br/>
           <p>Outcome is: {this.state.outcome} </p>
           <p>State is: {this.state.state} </p>
 
         <p>Yes Votes is: {this.state.yesVote} </p>
          <p>No Votes: {this.state.noVote} </p>
+         </Paper>
+         </Grid>
+         </Grid>
+         </Grid>
+
       </div>
     );
   }
