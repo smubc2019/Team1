@@ -16,6 +16,7 @@ Show how React can talk with the Ethereum blockchain through Metamask.
 3) Install create-react-app ``` npm install -g create-react-app ```
 
 # Contract Deployment
-Solidity contract is deployed onto Ropsten Testnet at 0xd538f22dbe6893821e0e568e0ab1ad902fcfe2a2
+Solidity contract is deployed onto Ropsten Testnet at
+0x36edc2dfca0c4633016e2ebb6dcd85c1ba42d728 (For testing)
 
 Files that you are interested. Contracts/VotingApp.sol , src/App.js
