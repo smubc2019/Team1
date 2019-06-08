@@ -1,19 +1,40 @@
-Voter Registry : all voters must register before voting
-				 registerVoters() to register with number of shares
-				 payable
+Blockchain Voting System
+========================
+Permissioned based blockchain
+Using ERC20
+Solidity, Web3 client &  Ropsten test environment
+Can bse used for condo MCST AGM, company AGM meetings
+Administrator publish proposals
+Voters must register to vote
+Voters cast votes within preset time
+Upon voting completion, system provide immediate voting results (PASSED/Accpeted, or DEFEATED/rejected)
+
+
+Voter Registry : 
+			voters[]
+			all voters must register before voting
+			registerVoters() to register with number of shares
+			no official & check of voter shares holding
+			payable
 				
-Proposals Registry :  createNewProposal() to add new proposal
-					  TTL (expiry)
-					  quorum (min %votes to pass proposal
-					  payable
+Proposals Registry :  
+			proposals[]
+			createNewProposal() to add new proposal
+			TTL (expiry)
+			quorum (min %votes to pass proposal
+			payable
+			
+			states:
+				createNewProposal() --> READY----->EXPIRED
+				
 					  
-Voting : Voter may cast votes (<= alloted shares)
+Voting : Voter may cast votes (<= shares)
 		castVoteForProposal()
 		A vote is a YES (support) vote
         No vote means voting against (NO vote)
 		free to vote
 		
-
+		
 calculateTotalVotes()
 		Count all YES votes
 		
